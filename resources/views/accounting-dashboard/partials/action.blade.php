@@ -1,0 +1,1 @@
+<td><a href="/accounting/{{ $assessment->id }}/applicant-assessments" class="btn btn-outline-primary btn-xs"><i class="fa fa-pencil"></i> Review</a></td>

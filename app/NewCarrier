@@ -1,0 +1,60 @@
+<?php
+
+namespace App;
+
+use Illuminate\Database\Eloquent\Model;
+
+class NewCarrier extends Model
+{
+    protected $guarded = [];
+
+     protected $dates = [ 
+
+        'from',
+        'to',
+    ];
+     
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+
+    public function sumAmount($name)
+    { 
+    	$classStations = NewCarrier::query(); 
+        
+        if (request()->has('from') && request()->has('to')) { 
+             $classStations->whereBetween('or_date', [request('from'), request('to')])->get();
+        }
+
+       if (request('class_stations')) {
+            $classStations->where('class_stations', request('class_stations'));
+        }
+        if (request('fees')) {
+            $classStations->where('fees', request('fees'));
+        }
+        return $classStations = $classStations->where('fees', $name)->sum('amount'); 
+    } 
+
+    public function sumClass($class_station)
+    { 
+        $classStations = NewCarrier::query(); 
+        if (request()->has('from') && request()->has('to')) { 
+             $classStations->whereBetween('or_date', [request('from'), request('to')])->get();
+        }
+
+       if (request('class_stations')) {
+            $classStations->where('class_stations', request('class_stations'));
+        }   
+
+        // foreach ($classStations as $assessment) {
+        //     $total = $assessment->license_fee + $assessment->inspection_fee + $dst;
+        // }
+        
+        return $classStations = $classStations->where('class_stations', $class_station)->sum('total_class'); //Ga 
+    } 
+ 
+ 
+        
+}

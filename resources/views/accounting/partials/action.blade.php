@@ -1,0 +1,1 @@
+<a href="{{ route('accountings.edit', $accounting) }}" class="btn btn-primary btn-xs">Edit</a>

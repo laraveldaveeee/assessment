@@ -1,0 +1,1 @@
+<td><a href="/cashier/show/applicant-assessments/{{ $applicant->id }}" class="btn btn-primary btn-xs"> View Details</a></td>

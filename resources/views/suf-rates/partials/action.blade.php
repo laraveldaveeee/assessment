@@ -1,0 +1,2 @@
+<a href="/suf-rates/{{ $sufRate->id }}/edit" class="btn btn-primary btn-xs"><i class="fa fa-edit"> </i> Edit</a>
+<a href="/suf-rates/{{ $sufRate->id }}/show" class="btn btn-warning btn-xs"><i class="fa fa-bar-chart"></i> Show</a>

@@ -1,0 +1,1 @@
+<a href="{{ route('accessors.edit', $accessor) }}" class="btn btn-primary btn-xs">Edit</a>

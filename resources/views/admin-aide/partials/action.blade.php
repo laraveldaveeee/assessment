@@ -1,0 +1,1 @@
+<a href="{{ route('admin-aide.edit', $adminAide) }}" class="btn btn-primary btn-xs">Edit</a>

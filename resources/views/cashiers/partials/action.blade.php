@@ -1,0 +1,1 @@
+<a href="{{ route('cashiers.edit', $cashier) }}" class="btn btn-primary btn-xs">Edit</a>

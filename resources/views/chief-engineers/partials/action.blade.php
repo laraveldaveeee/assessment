@@ -1,0 +1,1 @@
+<a href="{{ route('chief-engineers.edit', $chiefEngineer) }}" class="btn btn-primary btn-xs">Edit</a>

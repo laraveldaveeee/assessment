@@ -1,0 +1,1 @@
+<a href="{{ route('administrators.edit', $administrator) }}" class="btn btn-primary btn-xs">Edit</a>
