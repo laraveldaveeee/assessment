@@ -22,6 +22,13 @@
       <div class="panel-body">
          <a href="/applicants" class="btn btn-sm btn-warning m-b-10"><i class="fa fa-arrow-left"></i> Back Previous Page</a>
          <a href="/pdf-generate/{{ $assessment->id }}" class="btn btn-sm btn-primary m-b-10" target="_blank"><i class="fa fa-file-pdf t-plus-1 text-danger fa-fw fa-lg"></i> Print as PDF</a>  
+
+          <a href="/assessment/{{ $assessment->id }}/suf" class="btn btn-sm btn-success m-b-10" target="_blank"><i class="fa fa-file-pdf t-plus-1 text-danger fa-fw fa-lg"></i> Print as SUF</a> 
+
+         <a href="/assessment/{{ $assessment->id }}/dst" class="btn btn-sm btn-success m-b-10" target="_blank"><i class="fa fa-file-pdf t-plus-1 text-danger fa-fw fa-lg"></i> Print as DST</a>   
+
+            <a href="/assessment/{{ $assessment->id }}/dst" class="btn btn-sm btn-purple m-b-10" target="_blank"><i class="fa fa-file-pdf t-plus-1 text-danger fa-fw fa-lg"></i> Print Others</a>   
+
          <a href="javascript;;" data-id="{{ $assessment->applicant->id }}" class="btn btn-sm btn-primary m-b-10" data-toggle="modal" data-target="#generateNewAssessmentwithSOA" style="float: right;">New Assessment with SOA-NO</a>
          <table class="table table-bordered">
             <thead>

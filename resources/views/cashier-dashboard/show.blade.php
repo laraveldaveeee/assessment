@@ -45,11 +45,20 @@
         {{--   @if ($assessment->or_no) --}}
   {{--       <a href="/pdf-generate/{{ $assessment->applicant->latestAssessment->id }}" class="btn btn-sm btn-success m-b-10" target="_blank" ><i class="fa fa-print"></i> Print Records</a>  --}}
         <a href="/pdf-generate-cashier/{{ $assessment->id }}" class="btn btn-sm btn-outline-info m-b-10" target="_blank" ><i class="fa fa-print"></i> Print Records</a> 
-        {{--   @endif  --}}
+        {{--   @endif  --}} 
 
-        <a href="/pdf-generate-routing/{{ $assessment->id }}" class="btn btn-sm btn-outline-danger m-b-10" target="_blank" ><i class="fa fa-print"></i> Print Routing Slip</a> 
+          <a href="/assessment/{{ $assessment->id }}/suf" class="btn btn-sm btn-outline-success m-b-10" target="_blank"><i class="fa fa-file-pdf t-plus-1 text-danger fa-fw fa-lg"></i> Print as SUF</a>  
+
+         <a href="/assessment/{{ $assessment->id }}/dst" class="btn btn-sm btn-outline-success m-b-10" target="_blank"><i class="fa fa-file-pdf t-plus-1 text-danger fa-fw fa-lg"></i> Print as DST</a> 
+
+        <a href="/pdf-generate-routing/{{ $assessment->id }}" class="btn btn-sm btn-outline-danger m-b-10" target="_blank" ><i class="fa fa-print"></i> Print Routing Slip</a>  
+
+        <a href="/pdf-generate-receipt/{{ $assessment->id }}" class="btn btn-sm btn-outline-warning m-b-10" target="_blank"><i class="fa fa-print"></i> Print Receipt </a> 
         
-        <a href="/pdf-generate-receipt/{{ $assessment->id }}" class="btn btn-sm btn-outline-warning m-b-10" target="_blank"><i class="fa fa-print"></i> Print Receipt </a>
+        <a href="/pdf-generate-receipt/{{ $assessment->id }}/dst" class="btn btn-sm btn-outline-warning m-b-10" target="_blank"><i class="fa fa-print"></i> Print Receipt DST </a>
+
+        <a href="/pdf-generate-receipt/{{ $assessment->id }}/suf" class="btn btn-sm btn-outline-warning m-b-10" target="_blank"><i class="fa fa-print"></i> Print Receipt SUF </a>
+
           <form method="POST" action="/back-to-assessor/{{ $assessment->id }}" style="display: inline-block; float: right;">
             @csrf
             {{ method_field('PATCH') }}

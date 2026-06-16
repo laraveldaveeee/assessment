@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use App\Assessment;
 use App\Applicant;
 use App\NewCarrier;
+use App\ServiceFee;
 use App\User;
 class PDFGeneratorsController extends Controller
 {
@@ -130,5 +131,129 @@ class PDFGeneratorsController extends Controller
         $pdf->setPaper('legal', 'portrait');
         return $pdf->stream();
     }
+
+    //PER DST
+  public function printDST($assessmentId)
+    {
+        // $assessment = Assessment::with('serviceFees')->findOrFail($assessmentId);
+        // $dstFees = $assessment->serviceFees()
+        //     ->whereRaw('LOWER(name_fees) = ?', ['dst'])
+        //     ->get()
+        //     ->groupBy('name_fees');
+        // $dstTotal = $dstFees->flatten()->sum('total');
+        // $pdf = \PDF::loadView('pdf.dst-print', [
+        //     'assessment' => $assessment,
+        //     'dstFees' => $dstFees, 
+        //     'dstTotal' => $dstTotal, 
+        // ]);
+
+        $assessment = Assessment::with([
+            'serviceFees',
+            'assessmentServices',
+            'applicant',
+            'user'
+        ])->findOrFail($assessmentId);
+
+        $dstFees = $assessment->serviceFees()
+            ->whereRaw('LOWER(name_fees) = ?', ['dst'])
+            ->get(); 
+
+        $dstFeesGrouped = $dstFees->groupBy('name_fees');
+
+        $dstTotal = $dstFees->sum('total');
+
+        $pdf = \PDF::loadView('pdf.dst-print', [
+            'assessment' => $assessment,
+            'dstFees'     => $dstFees,
+            'dstFeesGrouped'     => $dstFeesGrouped,
+            'dstTotal'    => $dstTotal,
+        ])->setOption('margin-top', 10)
+          ->setOption('margin-right', 10)
+          ->setOption('margin-bottom', 20)
+          ->setOption('margin-left', 10);
+
+        return $pdf->stream('DST-' . $assessment->id . '.pdf');
+    }
+
+    public function printReceiptDST($assessmentId)
+    {
+        $assessment = Assessment::with('serviceFees')->findOrFail($assessmentId);
+        $dstFees = ServiceFee::whereHas('assessmentService', function ($q) use ($assessmentId) {
+                $q->where('assessment_id', $assessmentId);
+            })
+            ->whereRaw("LOWER(TRIM(name_fees)) = 'dst'")
+            ->get()
+            ->groupBy('name_fees');
+        $dstTotal = $dstFees->flatten()->sum('total');
+        $pdf = \PDF::loadView('pdf.receipt-dst', [
+            'assessment' => $assessment,
+            'dstFees'     => $dstFees,
+            'dstTotal'    => $dstTotal,
+        ]);
+        return $pdf->stream('DST-' . $assessment->id . '.pdf');
+    }
+
+    public function printReceiptSUF($assessmentId)
+    {
+        $assessment = Assessment::with('serviceFees')->findOrFail($assessmentId);
+        $fees = ServiceFee::whereHas('assessmentService', function ($q) use ($assessmentId) {
+                $q->where('assessment_id', $assessmentId);
+            })
+            ->get(); 
+        // SUF ONLY (keyword match) 
+        $sufFees = $fees->filter(function ($fee) {
+            return stripos($fee->name_fees, 'suf') !== false;
+        });
+
+        $sufGrouped = $sufFees->groupBy('name_fees');
+        $sufTotal = $sufFees->sum('total');
+
+        return \PDF::loadView('pdf.receipt-suf', [
+            'assessment' => $assessment,
+            'sufFees' => $sufGrouped,
+            'sufTotal' => $sufTotal,
+        ])->stream('SUF-'.$assessmentId.'.pdf');
+    }
+
+    public function printSUF($assessmentId)
+    {
+        // $assessment = Assessment::with('serviceFees')->findOrFail($assessmentId); 
+        // $sufFees = ServiceFee::whereHas('assessmentService', function ($q) use ($assessmentId) {
+        //         $q->where('assessment_id', $assessmentId);
+        //     })
+        //     ->where(function ($q) {
+        //         $q->whereRaw("LOWER(name_fees) LIKE '%suf%'");
+        //     })
+        //     ->get(); 
+
+        $assessment = Assessment::with([
+            'serviceFees',
+            'assessmentServices',
+            'applicant',
+            'user'
+        ])->findOrFail($assessmentId);
+
+        $sufFees = ServiceFee::whereHas('assessmentService', function ($q) use ($assessmentId) {
+            $q->where('assessment_id', $assessmentId);
+        })
+        ->whereRaw("LOWER(name_fees) LIKE '%suf%'")
+        ->get();
+
+        $sufFeesGrouped = $sufFees->groupBy('name_fees');
+        $sufTotal = $sufFees->sum('total'); 
+        
+        $pdf = \PDF::loadView('pdf.suf-print', [
+            'assessment' => $assessment,
+            'sufFees' => $sufFees,
+            'sufFeesGrouped'  => $sufFeesGrouped,
+            'sufTotal' => $sufTotal,
+        ])->setOption('margin-top', 10)
+          ->setOption('margin-right', 10)
+          ->setOption('margin-bottom', 20)
+          ->setOption('margin-left', 10);
+
+        return $pdf->stream('SUF-' . $assessment->id . '.pdf');
+    }
+
 }
 

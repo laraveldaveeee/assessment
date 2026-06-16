@@ -1,37 +1,31 @@
 <!DOCTYPE html>
 <html>
-   <head>
+<head>
 <meta charset="utf-8">
+<title>NTC</title>
+<link href="{{ asset('css/print.css') }}" rel="stylesheet" type="text/css" />
+</head>
 
-      <title>NTC</title>
-         <link href="{{ asset('css/print.css') }}" rel="stylesheet" type="text/css" />
+<body>
 
-      <style type="text/css">
-      </style>
-   </head>
-   <body> 
-      <div class="col-md-12"> 
-        <table class="table-bordered table-sm " width="100%" align="center" style="background: #154360; color: #fff;">
-          <tbody>
-            <tr> 
-              <td>
-                  <p class="text-center">
-                    <small>
-                            <strong>
-                              Republic of the Philippines <br> 
-                              NATIONAL TELECOMMUNICATIONS COMMISSION <br>
-                              Regional Office III, DMGC, Maimpis, City of San Fernando Pampanga <br>
-                              Tel. No. (045) 961-3743 / Fax No. 861-7958
-                            </strong>
-                      </small>
-                  </p>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+<div class="col-md-12">
+    <table width="100%" style="background:#154360;color:#fff;">
+        <tr>
+            <td class="text-center">
+                <small>
+                    <strong>
+                        Republic of the Philippines <br>
+                        NATIONAL TELECOMMUNICATIONS COMMISSION <br>
+                        Regional Office III, DMGC, Maimpis, City of San Fernando Pampanga <br>
+                        Tel. No. (045) 961-3743 / Fax No. 861-7958
+                    </strong>
+                </small>
+            </td>
+        </tr>
+    </table>
+</div>
 
-      <div class="col-md-12">
+     <div class="col-md-12">
           <table class="table table-bordered table-sm">
             <thead>
               <tr>
@@ -72,7 +66,7 @@
                   @endif                  
                 </small>
               </td> 
-                <td ><small >Total Amount Due: <h4><strong>P {{ number_format($grandTotal, 2) }}</strong></h4></small></td>
+                <td ><h4><strong>P {{ number_format($sufTotal, 2) }}</strong></h4></td>
               </tr>
               <tr>
                 <td width="500px;"><small>Note: {!! $assessment->applicant->notes !!}</small> </td>
@@ -85,9 +79,7 @@
                   {{--  <img src="{{ asset('signatures/karen.png') }}" style="width: 50px;">
                  <small> Assessed by : {{ $assessment->user->name }}</small> --}}
                 <small>Assessed By: <br> <strong> Engr. {{ $assessment->user->name }}
-
-
-
+ 
 
                 </strong></small>
 
@@ -148,92 +140,73 @@
           </div>
 
 
-        <div class="container">
-          <div class="row"> 
-            <div class="col-5"> 
-              @foreach ($assessment->assessmentServices as $assessmentService)
-               <br> 
-               <br> 
-               <br> 
-               <br> 
-               <br> 
-                <div class="no-gutters"> 
-                    <table class="table-condensed"  width="100%"  >
-                       <thead>
-                          <tr>
-                             <th colspan="6" style="background: #154360; color: #fff;"><small><strong>
-                              {{ $assessmentService->name }} 
-                              @if ($assessmentService->expiration_date)
-                                 - ({{ $assessmentService->expiration_date->format('F d, Y') }}) 
-                              @endif
+{{-- ========================= --}}
+{{-- SERVICES LOOP --}}
+{{-- ========================= --}}
+<div class="container">
+  <div class="row"> 
+    <div class="col-5"> 
+@foreach ($assessment->assessmentServices as $assessmentService)
 
-                            </strong></small></th>
-                          </tr>
-                          <tr>
-                                 <td colspan="6" style="background: #93bbff; color:#fff;">
-                              <small><strong>
-                              @if ($assessmentService->noted)
-                                  - {{ $assessmentService->noted }}
-                              @endif
-                            </small></strong>
-                            </td>
-                          </tr>
-                          <tr>
-                             <th><small>&nbsp;Code</small></th>
-                             <th><small>&nbsp;YR</small></th>
-                             <th><small>&nbsp;%</small></th>
-                             <th><small>&nbsp;QTY</small></th>
-                             <th><small>&nbsp;FEE</small></th>
-                             <th><small>&nbsp;AMT</small></th>
-                          </tr>
-                       </thead>
-                       <tbody>
-                        @foreach ($assessmentService->serviceFees as $serviceFee)
-                        <tr>
-                           <td><small>&nbsp;{{ $serviceFee->name_fees }}</small></td>
-                              <td><small>&nbsp;{{ $serviceFee->enabled_year_computation ? $assessmentService->yr : '' }}</small></td>
-                              <td><small>&nbsp;  
-                                  @if ($serviceFee->surcharge_amount)
-                                    {{ $serviceFee->surcharge_amount * 100 . '%' }} 
-                                  @endif
-                              </small></td>
-                              <td>&nbsp;
-                                @if ($serviceFee->enabled_portable_computation)
-                                  {{ ceil($assessmentService->qty / 25) }}
-                                @elseif ($dstDefault = $serviceFee->enabled_dst_default)
-                                  {{ $dstDefault }}
-                                @else
-                                  {{ $assessmentService->qty }}
-                                @endif
-                              </td>
-                              <td>
-                                  <small>&nbsp;
-                                  @if ($serviceFee->surcharge_amount)
-                                    <div hidden="">{{ $serviceFee->amount }}</div>
-                                  @elseif ($serviceFee->enabled_licensed_fee_computation)
-                                      {{ $serviceFee->amount  }}
-                                  @else 
-                                      {{ $serviceFee->amount }}
-                                  @endif
-                                  </small>
-                              </td>
-                              <td><small>&nbsp;{{ $serviceFee->total }}</small></td>
-                         {{--    <td>  {{ $serviceFee->surcharge_amount }} </td> --}}
-                        </tr>
-                          @if ($loop->last)
-                            <tr>
-                              <td colspan="5"><small>&nbsp;TOTAL</small></td>
-                              <td>{{ $assessmentService->serviceFees->sum('total')  }}</td>
-                            </tr>
-                          @endif
-                        @endforeach
-                     </tbody>
-                  </table>
-                </div>
+@php
+    $serviceFees = $sufFees->where('assessment_service_id', $assessmentService->id);
+
+    $serviceTotal = $serviceFees->sum(function ($fee) use ($assessmentService) {
+        return $fee->total * ($assessmentService->qty ?? 1);
+    });
+@endphp
+
+@if($serviceFees->count() > 0)
+
+    <table width="100%" class="table table-bordered table-sm" style="margin-bottom:20px;">
+        
+        <thead>
+            <tr>
+                <th colspan="6" style="background:#154360;color:#fff;">
+                    {{ $assessmentService->name }}
+                    @if($assessmentService->expiration_date)
+                        - {{ $assessmentService->expiration_date->format('F d, Y') }}
+                    @endif
+                </th>
+            </tr>
+
+            <tr>
+                <th>Code</th>
+                <th>YR</th>
+                <th>%</th>
+                <th>QTY</th>
+                <th>FEE</th>
+                <th>AMT</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            @foreach ($serviceFees as $fee)
+            <tr>
+                <td>{{ $fee->name_fees }}</td>
+                <td>{{ $assessmentService->yr  }}</td>
+                <td></td>
+                <td>{{ $assessmentService->qty ?? 1 }}</td>
+                <td>{{ number_format($fee->total, 2) }}</td>
+                <td>{{ number_format($fee->total, 2) }}</td>
+            </tr>
             @endforeach
-          </div>
 
-         @if ($assessment->op_no) 
+            <tr>
+                <th colspan="5" style="text-align:right;">Service Total</th>
+                <th>
+                    {{ number_format($fee->total, 2)  }}
+                </th>
+            </tr>
+
+        </tbody>
+    </table>
+@endif
+@endforeach
+ 
+</div>
+ @if ($assessment->op_no) 
             <div class="col-7"> 
               <table class="table table-bordered table-sm">
                 <thead>
@@ -276,21 +249,22 @@
                   <tr>
                     <td colspan="3"><small>Address: <strong>{{ $assessment->applicant->address }}</strong></small></td>
                   </tr>
-                  <tr>
-                    <td colspan="3"><small>in the amount of:  <strong>{{ convert_number_to_words($grandTotal) }} PESOS</strong></small></td>
+                  <tr>  
+                    <td colspan="3"><small>in the amount of:  <strong>{{ convert_number_to_words($sufTotal) }} PESOS</strong></small></td>
                   </tr>
                   <tr>
-                    <td colspan="3"><small>Amount: <strong>P {{ number_format($grandTotal, 2) }}</strong></small></td>
+                    <td colspan="3"><small>Amount: <strong>P {{ number_format($sufTotal, 2) }}</strong></small></td>
                   </tr>
                   <tr>
                     <td colspan="3">for payment of: 
-                      @foreach ($grouped as $name => $fees)
-                      <small>
-                        <strong>
-                          {{ $name }} ({{ $fees->sum('total') }}){{ ! $loop->last ? ',' : '' }}
-                        </strong>
-                      </small>
-                      @endforeach
+                    @foreach($sufFeesGrouped as $name => $fees)
+                          <small>
+                            <strong>
+                              {{ $name }} ({{ number_format($fees->sum('total'), 2) }})
+                              {{ !$loop->last ? ',' : '' }}
+                            </strong>
+                          </small>
+                    @endforeach
                     </td>
                     <tr> 
                       <td ><small>as per Statement of Account No. </small><br>
@@ -317,7 +291,7 @@
                     <tr>
                       <td><small><strong>3402-2641-78</strong></small></td>
                       <td><small><strong>LBP-WEST SN. FDO.</strong></small></td>
-                      <td><small><strong>P {{ number_format($grandTotal, 2) }}</strong></small></td>
+                      <td><small><strong>P {{ number_format($sufTotal, 2) }}</strong></small></td>
                     </tr>
                   </tr>
                 </tbody>
@@ -352,13 +326,11 @@
                     <td><small>OR DATE: <strong>{{ optional($assessment->or_date)->format('F d, Y')  }}</strong></small></td>
                   </tr>
                   <tr>
-                    <td><small>AMOUNT: <strong>P {{ $grandTotal }}</strong></small></td>
+                    <td><small>AMOUNT: <strong>P {{ $sufTotal, 2 }}</strong></small></td>
                   </tr>
                 </tbody>
               </table>
             </div> 
-         @endif  
-        </div> 
-      </div>   
-   </body>
+        @endif   
+</body>
 </html>
