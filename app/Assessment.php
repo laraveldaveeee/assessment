@@ -22,6 +22,8 @@ class Assessment extends Model
         'user_cashier_id',
         'messages',
         'or_no',
+        'or_no_suf',
+        'or_no_dst',
         'op_no',
         'or_date',
         'order_payment_date',

@@ -27,7 +27,7 @@
 
          <a href="/assessment/{{ $assessment->id }}/dst" class="btn btn-sm btn-success m-b-10" target="_blank"><i class="fa fa-file-pdf t-plus-1 text-danger fa-fw fa-lg"></i> Print as DST</a>   
 
-            <a href="/assessment/{{ $assessment->id }}/dst" class="btn btn-sm btn-purple m-b-10" target="_blank"><i class="fa fa-file-pdf t-plus-1 text-danger fa-fw fa-lg"></i> Print Others</a>   
+            <a href="/assessment/{{ $assessment->id }}/printOtherFees" class="btn btn-sm btn-purple m-b-10" target="_blank"><i class="fa fa-file-pdf t-plus-1 text-danger fa-fw fa-lg"></i> Print Others</a>   
 
          <a href="javascript;;" data-id="{{ $assessment->applicant->id }}" class="btn btn-sm btn-primary m-b-10" data-toggle="modal" data-target="#generateNewAssessmentwithSOA" style="float: right;">New Assessment with SOA-NO</a>
          <table class="table table-bordered">

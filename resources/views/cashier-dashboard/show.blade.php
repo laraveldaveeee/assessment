@@ -110,13 +110,27 @@
            <div class="row">
                 <div class="col-md-6">
                    <div class="form-group">
-                      <label class="text-white">OR NO:</label>
+                      <label class="text-black">OR NO:</label>
                       <input class="form-control " name="or_no" placeholder="Enter OR No." value="{{ $assessment->or_no }}">
                    </div>
                 </div>
                  <div class="col-md-6">
                    <div class="form-group">
-                      <label class="text-white">OR DATE</label>
+                      <label class="text-black">OR NO DST (Optional):</label>
+                      <input class="form-control " name="or_no_dst" placeholder="Enter OR No." value="{{ $assessment->or_no_dst }}">
+                   </div>
+                </div>
+
+                 <div class="col-md-6">
+                   <div class="form-group">
+                      <label class="text-black">OR NO SUF (Optional):</label>
+                      <input class="form-control " name="or_no_suf" placeholder="Enter OR No." value="{{ $assessment->or_no_suf }}">
+                   </div>
+                </div>
+
+                 <div class="col-md-6">
+                   <div class="form-group">
+                      <label class="text-black">OR DATE</label>
                       <input type="date" name="or_date" class="form-control " value="{{ Carbon\Carbon::now()->format('Y-m-d') }}">
                    </div>         
                  </div>     

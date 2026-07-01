@@ -65,7 +65,7 @@
                   @endif
 
                    <br>
-                      <small>Time In :<strong> {{ optional($assessment->time_update)->toTimeString() }}</strong></small>
+                      <small>Time In :<strong> {{ optional($assessment->time_update)->toTimeString()  }}</strong></small>
                       <small>Time In (Accounting) :<strong> {{ optional($assessment->accounting_time_update)->toTimeString() }}</strong></small>
                 </td>
               </tr>
@@ -333,7 +333,7 @@
               <table class="table table-bordered table-sm">
                 <tbody>
                   <tr>
-                    <td><small>OR NO: <strong>{{ $assessment->or_no }}</strong></small></td>
+                    <td><small>OR NO: <strong>{{ $assessment->or_no_dst }}</strong></small></td>
                   </tr>
                   <tr>
                     <td><small>OR DATE: <strong>{{ optional($assessment->or_date)->format('F d, Y')  }}</strong></small></td>

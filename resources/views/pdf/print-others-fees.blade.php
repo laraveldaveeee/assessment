@@ -1,31 +1,37 @@
 <!DOCTYPE html>
 <html>
-<head>
+   <head>
 <meta charset="utf-8">
-<title>NTC</title>
-<link href="{{ asset('css/print.css') }}" rel="stylesheet" type="text/css" />
-</head>
 
-<body>
+      <title>NTC</title>
+         <link href="{{ asset('css/print.css') }}" rel="stylesheet" type="text/css" />
 
-<div class="col-md-12">
-    <table width="100%" style="background:#154360;color:#fff;">
-        <tr>
-            <td class="text-center">
-                <small>
-                    <strong>
-                        Republic of the Philippines <br>
-                        NATIONAL TELECOMMUNICATIONS COMMISSION <br>
-                        Regional Office III, DMGC, Maimpis, City of San Fernando Pampanga <br>
-                        Tel. No. (045) 961-3743 / Fax No. 861-7958
-                    </strong>
-                </small>
-            </td>
-        </tr>
-    </table>
-</div>
+      <style type="text/css">
+      </style>
+   </head>
+   <body> 
+      <div class="col-md-12"> 
+        <table class="table-bordered table-sm " width="100%" align="center" style="background: #154360; color: #fff;">
+          <tbody>
+            <tr> 
+              <td>
+                  <p class="text-center">
+                    <small>
+                            <strong>
+                              Republic of the Philippines <br> 
+                              NATIONAL TELECOMMUNICATIONS COMMISSION <br>
+                              Regional Office III, DMGC, Maimpis, City of San Fernando Pampanga <br>
+                              Tel. No. (045) 961-3743 / Fax No. 861-7958
+                            </strong>
+                      </small>
+                  </p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-     <div class="col-md-12">
+      <div class="col-md-12">
           <table class="table table-bordered table-sm">
             <thead>
               <tr>
@@ -66,7 +72,7 @@
                   @endif                  
                 </small>
               </td> 
-                <td ><h4><strong>P {{ number_format($sufTotal, 2) }}</strong></h4></td>
+                <td ><small >Total Amount Due: <h4><strong>P {{ number_format($grandTotal, 2) }}</strong></h4></small></td>
               </tr>
               <tr>
                 <td width="500px;"><small>Note: {!! $assessment->applicant->notes !!}</small> </td>
@@ -79,7 +85,9 @@
                   {{--  <img src="{{ asset('signatures/karen.png') }}" style="width: 50px;">
                  <small> Assessed by : {{ $assessment->user->name }}</small> --}}
                 <small>Assessed By: <br> <strong> Engr. {{ $assessment->user->name }}
- 
+
+
+
 
                 </strong></small>
 
@@ -140,73 +148,98 @@
           </div>
 
 
-{{-- ========================= --}}
-{{-- SERVICES LOOP --}}
-{{-- ========================= --}}
-<div class="container">
-  <div class="row"> 
-    <div class="col-5"> 
-@foreach ($assessment->assessmentServices as $assessmentService)
+        <div class="container">
+          <div class="row"> 
+            <div class="col-5"> 
+          @foreach ($assessment->assessmentServices as $assessmentService)
 
-@php
-    $serviceFees = $sufFees->where('assessment_service_id', $assessmentService->id);
+            @php
+              $otherFees = $assessmentService->serviceFees->reject(function($fee){
+                  return in_array(trim($fee->name_fees), [
+                      'SUF',
+                      'DST'
+                  ]);
+              });
+          @endphp
 
-    $serviceTotal = $serviceFees->sum(function ($fee) use ($assessmentService) {
-        return $fee->total * ($assessmentService->qty ?? 1);
-    });
-@endphp
+                @if($otherFees->count())
 
-@if($serviceFees->count() > 0)
+                <br><br>
 
-    <table width="100%" class="table table-bordered table-sm" style="margin-bottom:20px;">
-        
-        <thead>
-            <tr>
-                <th colspan="6" style="background:#154360;color:#fff;">
-                    {{ $assessmentService->name }}
-                    @if($assessmentService->expiration_date)
-                        - {{ $assessmentService->expiration_date->format('F d, Y') }}
-                    @endif
-                </th>
-            </tr>
+                <table class="table-condensed" width="100%">
+                    <thead>
+                        <tr>
+                            <th colspan="6" style="background:#154360;color:#fff;">
+                                <small><strong>{{ $assessmentService->name }}</strong></small>
+                            </th>
+                        </tr>
 
-            <tr>
-                <th>Code</th>
-                <th>YR</th>
-                <th>%</th>
-                <th>QTY</th>
-                <th>FEE</th>
-                <th>AMT</th>
-            </tr>
-        </thead>
+                        <tr>
+                            <th><small>Code</small></th>
+                            <th><small>YR</small></th>
+                            <th><small>%</small></th>
+                            <th><small>QTY</small></th>
+                            <th><small>FEE</small></th>
+                            <th><small>AMT</small></th>
+                        </tr>
+                    </thead>
 
-        <tbody>
+                    <tbody>
 
-            @foreach ($serviceFees as $fee)
-            <tr>
-                <td>{{ $fee->name_fees }}</td>
-                <td>{{ $assessmentService->yr  }}</td>
-                <td></td>
-                <td>{{ $assessmentService->qty ?? 1 }}</td>
-                <td>{{ number_format($fee->total, 2) }}</td>
-                <td>{{ number_format($fee->total, 2) }}</td>
-            </tr>
+                    @php
+                        $total = 0;
+                    @endphp
+
+                    @foreach($otherFees as $serviceFee)
+
+                        @php
+                            $total += $serviceFee->total;
+                        @endphp
+
+                        <tr>
+                            <td>{{ $serviceFee->name_fees }}</td>
+
+                            <td>
+                                {{ $serviceFee->enabled_year_computation ? $assessmentService->yr : '' }}
+                            </td>
+
+                            <td>
+                                @if($serviceFee->surcharge_amount)
+                                    {{ $serviceFee->surcharge_amount * 100 }}%
+                                @endif
+                            </td>
+
+                            <td>
+                                @if($serviceFee->enabled_portable_computation)
+                                    {{ ceil($assessmentService->qty / 25) }}
+                                @elseif($serviceFee->enabled_dst_default)
+                                    {{ $serviceFee->enabled_dst_default }}
+                                @else
+                                    {{ $assessmentService->qty }}
+                                @endif
+                            </td>
+
+                            <td>{{ $serviceFee->amount }}</td>
+
+                            <td>{{ $serviceFee->total }}</td>
+                        </tr>
+
+                    @endforeach
+
+                    <tr>
+                        <td colspan="5"><strong>TOTAL</strong></td>
+                        <td><strong>{{ $total }}</strong></td>
+                    </tr>
+
+                    </tbody>
+                </table>
+
+                @endif
+
             @endforeach
+          </div>
 
-            <tr>
-                <th colspan="5" style="text-align:right;">Service Total</th>
-                <th>
-                    {{ number_format($fee->total, 2)  }}
-                </th>
-            </tr>
-
-        </tbody>
-    </table>
-@endif
-@endforeach
- 
-</div>
- @if ($assessment->op_no) 
+         @if ($assessment->op_no) 
             <div class="col-7"> 
               <table class="table table-bordered table-sm">
                 <thead>
@@ -249,22 +282,21 @@
                   <tr>
                     <td colspan="3"><small>Address: <strong>{{ $assessment->applicant->address }}</strong></small></td>
                   </tr>
-                  <tr>  
-                    <td colspan="3"><small>in the amount of:  <strong>{{ convert_number_to_words($sufTotal) }} PESOS</strong></small></td>
+                  <tr>
+                    <td colspan="3"><small>in the amount of:  <strong>{{ convert_number_to_words($grandTotal) }} PESOS</strong></small></td>
                   </tr>
                   <tr>
-                    <td colspan="3"><small>Amount: <strong>P {{ number_format($sufTotal, 2) }}</strong></small></td>
+                    <td colspan="3"><small>Amount: <strong>P {{ number_format($grandTotal, 2) }}</strong></small></td>
                   </tr>
                   <tr>
                     <td colspan="3">for payment of: 
-                    @foreach($sufFeesGrouped as $name => $fees)
-                          <small>
-                            <strong>
-                              {{ $name }} ({{ number_format($fees->sum('total'), 2) }})
-                              {{ !$loop->last ? ',' : '' }}
-                            </strong>
-                          </small>
-                    @endforeach
+                      @foreach ($grouped as $name => $fees)
+                      <small>
+                        <strong>
+                          {{ $name }} ({{ $fees->sum('total') }}){{ ! $loop->last ? ',' : '' }}
+                        </strong>
+                      </small>
+                      @endforeach
                     </td>
                     <tr> 
                       <td ><small>as per Statement of Account No. </small><br>
@@ -291,7 +323,7 @@
                     <tr>
                       <td><small><strong>3402-2641-78</strong></small></td>
                       <td><small><strong>LBP-WEST SN. FDO.</strong></small></td>
-                      <td><small><strong>P {{ number_format($sufTotal, 2) }}</strong></small></td>
+                      <td><small><strong>P {{ number_format($grandTotal, 2) }}</strong></small></td>
                     </tr>
                   </tr>
                 </tbody>
@@ -320,17 +352,19 @@
               <table class="table table-bordered table-sm">
                 <tbody>
                   <tr>
-                    <td><small>OR NO: <strong>{{ $assessment->or_no_suf }}</strong></small></td>
+                    <td><small>OR NO: <strong>{{ $assessment->or_no }}</strong></small></td>
                   </tr>
                   <tr>
                     <td><small>OR DATE: <strong>{{ optional($assessment->or_date)->format('F d, Y')  }}</strong></small></td>
                   </tr>
                   <tr>
-                    <td><small>AMOUNT: <strong>P {{ $sufTotal, 2 }}</strong></small></td>
+                    <td><small>AMOUNT: <strong>P {{ $grandTotal }}</strong></small></td>
                   </tr>
                 </tbody>
               </table>
             </div> 
-        @endif   
-</body>
+         @endif  
+        </div> 
+      </div>   
+   </body>
 </html>

@@ -6,6 +6,9 @@ use App\Applicant;
 
 Route::get('/assessment/{assessment}/dst', 'PDFGeneratorsController@printDST');
 Route::get('/assessment/{assessment}/suf', 'PDFGeneratorsController@printSUF');
+Route::get('/assessment/{assessment}/suf', 'PDFGeneratorsController@printSUF');
+
+Route::get('/assessment/{assessment}/printOtherFees', 'PDFGeneratorsController@printOtherFees');
 
 Route::get('/pdf-generate-receipt/{assessment}/dst', 'PDFGeneratorsController@printReceiptDST');
 Route::get('/pdf-generate-receipt/{assessment}/suf', 'PDFGeneratorsController@printReceiptSUF');

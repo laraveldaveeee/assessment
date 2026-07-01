@@ -64,6 +64,8 @@ class CashiersDashboardController extends Controller
             'user_cashier_id'   => auth()->id(),
             'status'    => 'Paid',  
             'or_no'     => request('or_no'),
+            'or_no_suf'     => request('or_no_suf'),
+            'or_no_dst'     => request('or_no_dst'),
             'op_no'     => $order_of_payment,
             'or_date'   => request('or_date'),
             'cashier_time_update'    => $mytime,
@@ -167,6 +169,8 @@ class CashiersDashboardController extends Controller
         $assessment->update([
             'carrier_status'    => 'Paid',  
             'or_no'     => request('or_no'),
+            'or_no_suf'     => request('or_no_suf'),
+            'or_no_dst'     => request('or_no_dst'),
             'or_date'   => request('or_date'),
             'op_no'     => $order_of_payment, 
         ]);  

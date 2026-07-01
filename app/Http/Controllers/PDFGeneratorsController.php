@@ -238,10 +238,8 @@ class PDFGeneratorsController extends Controller
         })
         ->whereRaw("LOWER(name_fees) LIKE '%suf%'")
         ->get();
-
         $sufFeesGrouped = $sufFees->groupBy('name_fees');
         $sufTotal = $sufFees->sum('total'); 
-        
         $pdf = \PDF::loadView('pdf.suf-print', [
             'assessment' => $assessment,
             'sufFees' => $sufFees,
@@ -255,5 +253,66 @@ class PDFGeneratorsController extends Controller
         return $pdf->stream('SUF-' . $assessment->id . '.pdf');
     }
 
+
+    public function printOtherFees(Assessment $assessment)
+    {
+        $assessment->load([
+            'applicant',
+            'assessmentServices.serviceFees',
+            'fees'
+        ]);
+
+        // Group fees para sa Order of Payment (hindi kasama ang DST at SUF)
+        $grouped = $assessment->fees
+            ->reject(function ($fee) {
+                return in_array(trim($fee->name_fees), ['DST', 'SUF']);
+            })
+            ->groupBy('name_fees');
+
+        // Alisin ang DST at SUF sa bawat service
+        $assessment->assessmentServices->transform(function ($service) {
+
+            $service->setRelation(
+                'serviceFees',
+                $service->serviceFees
+                    ->reject(function ($fee) {
+                        return in_array(trim($fee->name_fees), ['DST', 'SUF']);
+                    })
+                    ->values()
+            );
+
+            return $service;
+        });
+
+        // Alisin ang service na wala nang natirang fee
+        $assessment->setRelation(
+            'assessmentServices',
+            $assessment->assessmentServices
+                ->filter(function ($service) {
+                    return $service->serviceFees->count() > 0;
+                })
+                ->values()
+        );
+
+        // Grand Total (hindi kasama ang DST at SUF)
+        $grandTotal = $assessment->assessmentServices
+            ->flatMap(function ($service) {
+                return $service->serviceFees;
+            })
+            ->sum('total');
+
+        $user = User::where('role_id', 2)->first();
+
+        $pdf = \PDF::loadView('pdf.print-others-fees', [
+            'assessment' => $assessment,
+            'grouped'    => $grouped,
+            'grandTotal' => $grandTotal,
+            'user'       => $user,
+        ]);
+
+        $pdf->setPaper('legal', 'portrait');
+
+        return $pdf->stream('print-others-fees.pdf');
+    }
 }
 
