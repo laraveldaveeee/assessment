@@ -49,7 +49,7 @@
               </tr>
               <tr>
                 <td><small>Address: <strong> {{ $assessment->applicant->address }}</strong></small></td>
-                <td><small>SOA #: <strong>{{ $assessment->soa_no }} | ID NO: {{ $assessment->applicant->id }}</strong></small></td>
+                <td><small>SOA #: <strong>{{ $assessment->soa_no }}B | ID NO: {{ $assessment->applicant->id }}</strong></small></td>
               </tr>
               <tr>
                  <td><small>Status: 

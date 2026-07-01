@@ -265,7 +265,7 @@ class PDFGeneratorsController extends Controller
         // Group fees para sa Order of Payment (hindi kasama ang DST at SUF)
         $grouped = $assessment->fees
             ->reject(function ($fee) {
-                return in_array(trim($fee->name_fees), ['DST', 'SUF']);
+                return in_array(trim($fee->name_fees), ['DST', 'SUF' , 'dst' , 'suf']);
             })
             ->groupBy('name_fees');
 
@@ -276,7 +276,7 @@ class PDFGeneratorsController extends Controller
                 'serviceFees',
                 $service->serviceFees
                     ->reject(function ($fee) {
-                        return in_array(trim($fee->name_fees), ['DST', 'SUF']);
+                        return in_array(trim($fee->name_fees), ['DST', 'SUF' , 'dst' , 'suf']);
                     })
                     ->values()
             );
