@@ -57,7 +57,10 @@
         
         <a href="/pdf-generate-receipt/{{ $assessment->id }}/dst" class="btn btn-sm btn-outline-warning m-b-10" target="_blank"><i class="fa fa-print"></i> Print Receipt DST </a>
 
-        <a href="/pdf-generate-receipt/{{ $assessment->id }}/suf" class="btn btn-sm btn-outline-warning m-b-10" target="_blank"><i class="fa fa-print"></i> Print Receipt SUF </a>
+        <a href="/pdf-generate-receipt/{{ $assessment->id }}/suf" class="btn btn-sm btn-outline-warning m-b-10" target="_blank"><i class="fa fa-print"></i> Print Receipt SUF </a> 
+        <a href="/pdf-generate-receipt/{{ $assessment->id }}/other-fees" class="btn btn-sm btn-outline-warning m-b-10" target="_blank"><i class="fa fa-print"></i> Print Receipt Other Fees </a>
+
+
 
           <form method="POST" action="/back-to-assessor/{{ $assessment->id }}" style="display: inline-block; float: right;">
             @csrf

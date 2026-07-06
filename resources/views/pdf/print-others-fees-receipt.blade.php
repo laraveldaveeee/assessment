@@ -35,52 +35,57 @@
 			</tbody>
 		</table>
 	</div>
-
 	<div class="form-group" style="margin-top: 5%; margin-left: 7%;">
-		<table class="table-sm" style="width:32%;">
-		    <tbody>
 
-		     @foreach($dstFees as $name => $fees)
-			    <tr>
-			        <td>{{ $name }}</td>
-			        <td style="text-align:right;">
-			            {{ number_format($fees->sum('total'), 2) }}
-			        </td>
-			    </tr> 
+		@php
+			$filteredGrouped = $grouped->reject(function ($fees, $name) {
+				return in_array(strtoupper(trim($name)), ['DST', 'SUF']);
+			})->values();
+		@endphp
+
+		<table class="table-sm "  style="width: 32%;"> 
+			 @foreach ($filteredGrouped as $fees)
+
+			@php
+				$name = $fees->first()->name_fees;
+			@endphp 
+				  <tr>
+		            <td>{{ $name }}</td>
+		            <td style="text-align:right;">
+		                {{ number_format($fees->sum('total'), 2) }}
+		            </td>
+		        </tr>
 
 		        @if ($loop->last)
-		            @for ($i = 1; $i <= (8 - count($dstFees)); $i++)
+		            @for ($i = 1; $i <= (8 - $filteredGrouped->count()); $i++)
 		                <tr>
 		                    <td>&nbsp;</td>
 		                    <td>&nbsp;</td>
 		                </tr>
 		            @endfor
 		        @endif
-		    @endforeach
 
-		    <tr>
-		        <td></td>
-		        <td style="text-align:right;">
-		            {{ number_format($dstTotal, 2) }}
-		        </td>
-		    </tr>
-
-		    </tbody>
+				@endforeach	
+				<tr>
+					<td></td>
+					<td style="text-align: right; line-height: -0em; ">{{ $grandTotal, 2 }}</td>
+				</tr>
+			</tbody>
 		</table>
 		<br>
 
 		<table class="" style="width: 50%;">
 			<tr>
-				<td height="68" colspan="2"><b>{{ convert_number_to_words($dstTotal) }} Pesos Only</b></td>
+				<td height="68" colspan="2"><b>{{ convert_number_to_words($grandTotal) }} Pesos Only</b></td>
 			</tr>
 		</table>
 	</div>	
 
 	<div style="margin-top: 7%;margin-left: 4%;">
-		{{-- {{ $assessment->treasury }}  --}}
+		{{ $assessment->treasury }} 
 	</div>
 	<div style="margin-top: 30px;margin-left: 4%;">
-		{{-- {{ $assessment->date_of_treasury }} --}}
+		{{ $assessment->date_of_treasury }}
 	</div>
 
 {{-- 	<div class="form-group">

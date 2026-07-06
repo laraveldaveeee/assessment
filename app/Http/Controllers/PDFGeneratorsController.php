@@ -314,5 +314,66 @@ class PDFGeneratorsController extends Controller
 
         return $pdf->stream('print-others-fees.pdf');
     }
+
+    public function printReceiptOtherFees(Assessment $assessment)
+    {
+          $assessment->load([
+            'applicant',
+            'assessmentServices.serviceFees',
+            'fees'
+        ]);
+
+        // Group fees para sa Order of Payment (hindi kasama ang DST at SUF)
+        $grouped = $assessment->fees
+            ->reject(function ($fee) {
+                return in_array(strtoupper(trim($fee->name_fees)), ['DST', 'SUF']);
+            })
+            ->groupBy(function ($fee) {
+                return strtoupper(trim($fee->name_fees));
+            });
+
+        // Alisin ang DST at SUF sa bawat service
+      $assessment->assessmentServices->transform(function ($service) {
+
+        $service->setRelation(
+            'serviceFees',
+            $service->serviceFees
+                ->reject(function ($fee) {
+                    return in_array(strtoupper(trim($fee->name_fees)), ['DST', 'SUF']);
+                })
+                ->values()
+        );
+
+        return $service;
+    });
+
+        // Alisin ang service na wala nang natirang fee
+        $assessment->setRelation(
+            'assessmentServices',
+            $assessment->assessmentServices
+                ->filter(function ($service) {
+                    return $service->serviceFees->count() > 0;
+                })
+                ->values()
+        );
+
+        // Grand Total (hindi kasama ang DST at SUF)
+        $grandTotal = $assessment->assessmentServices
+            ->flatMap(function ($service) {
+                return $service->serviceFees;
+            })
+            ->sum('total');
+ 
+
+        $pdf = \PDF::loadView('pdf.print-others-fees-receipt', [
+            'assessment' => $assessment,
+            'grouped'    => $grouped,
+            'grandTotal' => $grandTotal, 
+        ]);
+
+        $pdf->setPaper('legal', 'portrait');
+
+        return $pdf->stream('print-others-fees-receipt.pdf');
+    }
 }
 
